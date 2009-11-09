@@ -27,7 +27,6 @@ using namespace std;
 
 #include "config.h"
 #include "freeling.h"
-#include "IORedirectHandler.hpp"
 
 
 void PrintDepTree(dep_tree::iterator n, int depth, const config &cfg)
@@ -164,17 +163,8 @@ void ProcessPlain(const config &cfg, tokenizer *tk, splitter *sp, maco *morfo,
   int nsentence = 1;
 
   long unsigned int offset = 0;
-  while (true)
+  while (std::getline(std::cin, text))
   {
-    CppIORedirectHandler ioredirect(cfg);
-
-    cout << "<?xml version='1.0' encoding='UTF-8' ?>" << endl;
-    if (cfg.write_xslt)
-      cout << "<?xml-stylesheet type='text/xsl' href='profit.xsl'?>" << endl;
-    cout << "<corpus>" << endl;
-
-    while (std::getline(std::cin, text))
-    {
       av = tk->tokenize(text, offset);
       ls = sp->split(av, cfg.AlwaysFlush);
       morfo->analyze(ls);
@@ -185,9 +175,9 @@ void ProcessPlain(const config &cfg, tokenizer *tk, splitter *sp, maco *morfo,
         neclass->analyze(ls);
       parser->analyze(ls);
       dep->analyze(ls);
-      
+
       PrintResults(ls, cfg, nsentence);
-      
+
       av.clear(); // clear list of words for next use
       ls.clear(); // clear list of sentences for next use
     }
@@ -205,11 +195,6 @@ void ProcessPlain(const config &cfg, tokenizer *tk, splitter *sp, maco *morfo,
     dep->analyze(ls);
 
     PrintResults(ls, cfg, nsentence);
-    cout << "</corpus>" << endl;
-
-    if (!ioredirect.serverOK())
-      break;
-  }
 }
 
 
@@ -276,8 +261,18 @@ int main(int argc, char **argv)
   parser = new chart_parser(cfg.PARSER_GrammarFile);
   dep = new dep_txala(cfg.DEP_TxalaFile, parser->get_start_symbol());
 
+
+  //PROFIT
+  cout << "<?xml version='1.0' encoding='UTF-8' ?>" << endl;
+  if (cfg.write_xslt)
+    cout << "<?xml-stylesheet type='text/xsl' href='profit.xsl'?>" << endl;
+  cout << "<corpus>" << endl;
+
   // Input is plain text.
   ProcessPlain(cfg, tk, sp, morfo, tagger, neclass, sens, parser, dep);
+
+  //PROFIT
+  cout << "</corpus>" << endl;
 
   // clean up. Note that deleting a null pointer is a safe (yet useless) operation
   delete tk;

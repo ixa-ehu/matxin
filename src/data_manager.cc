@@ -212,8 +212,8 @@ bool apply_condition(wstring attributes, wstring condition)
       }
       else
       {
-        wstring value = condition.substr(operator_position + 1,
-                                         blank_position - operator_position - 1);
+        wstring value = condition.substr(operator_position + 2,
+                                         blank_position - operator_position - 3);
         return watoi(text_attrib(attributes, attribute).c_str()) > watoi(value.c_str());
       }
     }
@@ -240,8 +240,8 @@ bool apply_condition(wstring attributes, wstring condition)
       }
       else
       {
-        wstring value = condition.substr(operator_position + 1,
-                                         blank_position - operator_position - 1);
+        wstring value = condition.substr(operator_position + 2,
+                                         blank_position - operator_position - 3);
         return watoi(text_attrib(attributes, attribute).c_str()) < watoi(value.c_str());
       }
     }
@@ -455,8 +455,8 @@ bool apply_condition(wstring parent_attributes, wstring child_attributes, wstrin
       }
       else
       {
-        wstring value = condition.substr(operator_position + 1,
-                                         blank_position - operator_position - 1);
+        wstring value = condition.substr(operator_position + 2,
+                                         blank_position - operator_position - 3);
 
         if (chunk == L"parent")
           return watoi(text_attrib(parent_attributes, attribute).c_str()) > watoi(value.c_str());
@@ -496,8 +496,8 @@ bool apply_condition(wstring parent_attributes, wstring child_attributes, wstrin
       }
       else
       {
-        wstring value = condition.substr(operator_position + 1,
-                                         blank_position - operator_position - 1);
+        wstring value = condition.substr(operator_position + 2,
+                                         blank_position - operator_position - 3);
 
         if (chunk == L"parent")
           return watoi(text_attrib(parent_attributes, attribute).c_str()) < watoi(value.c_str());
@@ -938,7 +938,7 @@ void init_preposition_transference(string fitxName)
 
 vector<wstring>
   preposition_transference(wstring parent_attributes, wstring child_attributes,
-                           wstring sentenceref, int sentencealloc, config &cfg)
+                           wstring sentenceref, int sentencealloc)
 {
   vector<wstring> maintain_cases;
 
@@ -957,28 +957,23 @@ vector<wstring>
 
   vector<preposition> current_prep = prepositions[prep];
 
-  if (cfg.DoPrepTrace)
-    wcerr << sentenceref << L":" << alloc << L":" << prep;
   for (size_t i = 0; i < current_prep.size(); i++)
   {
-    if (cfg.DoPrepTrace)
-      wcerr << L"\t" << current_prep[i].cas << L"::"
-            << current_prep[i].condition << L"::" << current_prep[i].maintain
-            << endl;
     if (current_prep[i].maintain == L"+")
       maintain_cases.push_back(current_prep[i].cas);
 
-    if (cfg.UsePrepRules and current_prep[i].condition != L"-" and
+    if (current_prep[i].condition != L"-" and
         apply_condition(parent_attributes, child_attributes, current_prep[i].condition))
     {
       vector<wstring> translation_case;
 
       translation_case.push_back(current_prep[i].cas);
-
+/*
       if (cfg.DoPrepTrace)
         wcerr << endl << L"ERREGELEN BIDEZ ITZULI DA (" << sentenceref
               << L":" << alloc << L":" << prep << L"): " << current_prep[i].cas
               << endl << endl;
+*/
       return translation_case;
     }
   }
@@ -989,6 +984,7 @@ vector<wstring>
     wcerr << L"WARNING: unknown preposition " << prep << endl;
   }
 
+/*
   if (cfg.DoPrepTrace)
   {
     wcerr << endl << L"HIZTEGIKO ERANTZUNA(" << sentenceref << L":" << alloc
@@ -997,7 +993,7 @@ vector<wstring>
       wcerr << maintain_cases[j] << L" ";
     cerr << endl << endl;
   }
-
+*/
   return maintain_cases;
 }
 
@@ -1066,7 +1062,7 @@ void init_lexical_selection(string filename)
 
 vector<wstring>
   lexical_selection(wstring parent_attributes, wstring common_attribs,
-                  vector<wstring> child_attributes, config &cfg)
+                  vector<wstring> child_attributes)
 {
   wstring src_lemma;
   wstring trgt_lemma;
@@ -1089,7 +1085,7 @@ vector<wstring>
     if (current_rule.default_value == L"+")
       default_case.insert(default_case.begin(), child_attributes[i]);
 
-    if (cfg.UseLexRules && current_rule.condition != L"" and
+    if (current_rule.condition != L"" and
         apply_condition(parent_attributes, attributes,
                         current_rule.condition))
     {
@@ -1262,11 +1258,11 @@ wstring
   verb_subcategorisation(wstring verb_lemma, vector<vector<wstring> > &cases,
                          vector<wstring> &attributes, vector<wstring> &subj_cases,
                          wstring subj_attributes, wstring sentenceref,
-                         int sentencealloc, config &cfg)
+                         int sentencealloc)
 {
   vector<subcategorisation> subcat = subcategorisations[verb_lemma];
 
-  if (cfg.DoPrepTrace)
+/*  if (cfg.DoPrepTrace)
   {
     wcerr << L"AZPIKATEGORIZAZIOA APLIKATZEN: " << verb_lemma << endl;
     wstring prep = text_attrib(subj_attributes, L"prep");
@@ -1291,7 +1287,7 @@ wstring
     }
     cerr << endl;
   }
-
+*/
   bool matches_subj, best_matches_subj;
   int best_fixed = -1;
   int best_length = 0;
@@ -1334,15 +1330,17 @@ wstring
         subcat_length++;
     }
 
+/*
     if (cfg.DoPrepTrace)
       wcerr << subcat_pattern << L"/" << subcat[i].subj_case << L"/"
             << subcat[i].trans << L" || " << fixed_cases  << L"/"
             << cases_size << L"/" << subcat_length << endl;
-
+*/
     if (fixed_cases == cases_size && (matches_subj))
     {
       cases = final_cases;
 
+/*
       if (cfg.DoPrepTrace)
       {
         wstring prep = text_attrib(subj_attributes, L"prep");
@@ -1366,7 +1364,7 @@ wstring
         }
         cerr << endl;
       }
-
+*/
       subj_cases.clear();
       subj_cases.push_back(L"[" + subcat[i].subj_case + L"]");
 
@@ -1392,6 +1390,7 @@ wstring
     subj_cases.push_back(L"[" + best_subj_case + L"]");
   }
 
+/*
   if (cfg.DoPrepTrace)
   {
     wstring prep = text_attrib(subj_attributes, L"prep");
@@ -1415,7 +1414,7 @@ wstring
     }
     cerr << endl;
   }
-
+*/
   return best_trans;
 }
 
@@ -1497,7 +1496,7 @@ wstring to_upper(wstring input)
 vector<wstring>
   verb_noun_subcategorisation(wstring verb_lemma, wstring chunk_head,
                               vector<wstring> &cases, wstring &attributes,
-                              wstring sentenceref, int sentencealloc, config &cfg)
+                              wstring sentenceref, int sentencealloc)
 {
   vector<wstring> subcat = verb_noun_subcat[verb_lemma][chunk_head];
 
@@ -1505,6 +1504,8 @@ vector<wstring>
   wstring prep = text_attrib(attributes, L"prep");
   if (prep == L"")
     prep = L"-";
+
+/*
   if (cfg.DoPrepTrace)
   {
     wcerr << sentenceref << L":" << alloc << L":" << prep
@@ -1521,7 +1522,7 @@ vector<wstring>
     }
     wcerr << L"]" << endl;
   }
-
+*/
   for (size_t i = 0; i < subcat.size(); i++)
   {
     vector<wstring> output;
@@ -1552,6 +1553,7 @@ vector<wstring>
 
     if (output.size() > 0)
     {
+/*
       if (cfg.DoPrepTrace)
       {
         wcerr << sentenceref << L":" << alloc << L":" << prep
@@ -1562,11 +1564,12 @@ vector<wstring>
         }
         cerr << endl << endl;
       }
-
+*/
       return output;
     }
   }
 
+/*
   if (cfg.DoPrepTrace)
   {
     wcerr << sentenceref << L":" << alloc << L":" << prep
@@ -1577,7 +1580,7 @@ vector<wstring>
     }
     cerr << endl << endl;
   }
-
+*/
   return cases;
 }
 

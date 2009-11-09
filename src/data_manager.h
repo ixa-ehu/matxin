@@ -24,7 +24,7 @@
 #include <vector>
 #include <string>
 
-#include "config.h"
+//#include "config.h"
 
 #include "simpleregex.h"
 #include "XML_reader.h"
@@ -65,19 +65,19 @@ void init_chunk_order(string fitxName);
 wstring get_chunk_order(wstring parent_attribs, wstring child_attribs, int relative_order);
 
 void init_preposition_transference(string fitxName);
-vector<wstring> preposition_transference(wstring parent_attributes, wstring child_attributes, wstring sentenceref, int sentencealloc, config &cfg);
+vector<wstring> preposition_transference(wstring parent_attributes, wstring child_attributes, wstring sentenceref, int sentencealloc);
 
 void
   init_lexical_selection(string filename);
 vector<wstring>
   lexical_selection(wstring parent_attributes, wstring common_attributes,
-                    vector<wstring> child_attributes, config &cfg);
+                    vector<wstring> child_attributes);
 
 void init_verb_subcategorisation(string fitxName);
-wstring verb_subcategorisation(wstring verb_lemma, vector<vector<wstring> > &cases, vector<wstring> &attributes, vector<wstring> &subj_cases, wstring subj_attributes, wstring sentenceref, int sentencealloc, config &cfg);
+wstring verb_subcategorisation(wstring verb_lemma, vector<vector<wstring> > &cases, vector<wstring> &attributes, vector<wstring> &subj_cases, wstring subj_attributes, wstring sentenceref, int sentencealloc);
 
 void init_verb_noun_subcategorisation(string fitxName);
-vector<wstring> verb_noun_subcategorisation(wstring verb_lemma, wstring chunk_head, vector<wstring> &cases, wstring &attributes, wstring sentenceref, int sentencealloc, config &cfg);
+vector<wstring> verb_noun_subcategorisation(wstring verb_lemma, wstring chunk_head, vector<wstring> &cases, wstring &attributes, wstring sentenceref, int sentencealloc);
 
 void init_node_order(string fitxName);
 wstring get_node_order(wstring chunk_type, wstring nodes);

@@ -2,15 +2,15 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([matxin], [1.4.0-beta])
-AC_CONFIG_SRCDIR([src/Analyzer.cc])
+AC_INIT([matxin], [1.5.0])
+AC_CONFIG_SRCDIR([src/matxin_xfer_lex.cc])
 AC_CONFIG_AUX_DIR([build-aux])
 PACKAGE=matxin
 
 GENERIC_MAJOR_VERSION=1
 GENERIC_MINOR_VERSION=4
 GENERIC_MICRO_VERSION=0
-GENERIC_EXTRA_VERSION=beta
+GENERIC_EXTRA_VERSION=
 
 GENERIC_RELEASE=$GENERIC_MAJOR_VERSION.$GENERIC_MINOR_VERSION
 GENERIC_RELEASE=$GENERIC_MAJOR_VERSION.$GENERIC_MINOR_VERSION.$GENERIC_MICRO_VERSION-$GENERIC_EXTRA_VERSION
@@ -130,30 +130,6 @@ AC_ARG_WITH(lttoolbox,
                  ;;
               esac ])
 
-AC_ARG_WITH(fries,
-            [AS_HELP_STRING([--with-fries=DIR],
-                            [Look for libfries include/libs in DIR])],
-            [ case "$withval" in
-               no)
-                 ;;
-               *)
-                 CPPFLAGS="-I$withval/include $CPPFLAGS"
-                 LDFLAGS="-L$withval/lib $LDFLAGS"
-                 ;;
-              esac ])
-
-AC_ARG_WITH(omlet,
-            [AS_HELP_STRING([--with-omlet=DIR],
-                            [Look for libomlet include/libs in DIR])],
-            [ case "$withval" in
-               no)
-                 ;;
-               *)
-                 CPPFLAGS="-I$withval/include $CPPFLAGS"
-                 LDFLAGS="-L$withval/lib $LDFLAGS"
-                 ;;
-              esac ])
-
 AC_ARG_WITH(libxml2,
             [AS_HELP_STRING([--with-libxml2=DIR],
                             [Look for libxml2 include/libs in DIR])],
@@ -162,18 +138,6 @@ AC_ARG_WITH(libxml2,
                  ;;
                *)
                  CPPFLAGS="$CPPFLAGS -I$withval/include/libxml2"
-                 LDFLAGS="$LDFLAGS -L$withval/lib"
-                 ;;
-              esac ])
-
-AC_ARG_WITH(libcfg,
-            [AS_HELP_STRING([--with-libcfg=DIR],
-                            [Look for libcfg+ include/libs in DIR])],
-            [ case "$withval" in
-               no)
-                 ;;
-               *)
-                 CPPFLAGS="$CPPFLAGS -I$withval/include"
                  LDFLAGS="$LDFLAGS -L$withval/lib"
                  ;;
               esac ])
@@ -189,19 +153,6 @@ AC_ARG_WITH(pcre,
                  LDFLAGS="$LDFLAGS -L$withval/lib"
                  ;;
               esac ])
-
-AC_ARG_WITH(berkeley,
-            [AS_HELP_STRING([--with-berkeley=DIR],
-                            [Look for Berkeley db_cxx include/libs in DIR])],
-            [ case "$withval" in
-               no)
-                 ;;
-               *)
-                 CPPFLAGS="$CPPFLAGS -I$withval/include"
-                 LDFLAGS="$LDFLAGS -L$withval/lib"
-                 ;;
-              esac ])
-
 
 #
 # Checks for programs.
@@ -278,6 +229,17 @@ else
   fi
 fi
 
+AC_PATH_PROG(XMLLINT, xmllint, no)
+if test x$ac_cv_path_XMLLINT = x
+then
+  AC_MSG_ERROR([You don't have xmllint installed.])
+fi
+if test x$ac_cv_path_XMLLINT = xno
+then
+  AC_MSG_ERROR([You don't have xmllint installed.])
+fi
+
+
 AC_PATH_PROG(FLEX, flex, no)
 if test x$ac_cv_path_FLEX = x
 then
@@ -318,17 +280,6 @@ then
   AC_MSG_ERROR([lt-comp not found. You may want to adjust your PATH.])
 fi
 
-AC_PATH_PROG(INDEXDICT, indexdict, no)
-if test x$ac_cv_path_INDEXDICT = x
-then
-  AC_MSG_ERROR([indexdict not found. You may want to adjust your PATH.])
-fi
-if test x$ac_cv_path_INDEXDICT = xno
-then
-  AC_MSG_ERROR([indexdict not found. You may want to adjust your PATH.])
-fi
-
-
 #
 # Checks for libraries.
 #
@@ -366,30 +317,27 @@ AC_CHECK_FUNCS([socket])
 #
 AC_CONFIG_FILES([matxin.pc
                  Makefile
-                 data/Makefile
-                 data/config/Makefile
-                 data/dict/Makefile
-                 data/dict/en-eu/Makefile
-                 data/dict/es-eu/Makefile
-                 data/freeling/Makefile
-                 data/freeling/common/Makefile
-                 data/freeling/common/nec/Makefile
-		 data/freeling/common/corrector/Makefile
-                 data/freeling/en/Makefile
-                 data/freeling/en/chunker/Makefile
-                 data/freeling/en/dep/Makefile
-                 data/freeling/en/nec/Makefile
-		 data/freeling/en/corrector/Makefile
-                 data/freeling/es/Makefile
-                 data/freeling/es/dep/Makefile
-                 data/freeling/es/nec/Makefile
-		 data/freeling/es/ner/Makefile
-		 data/freeling/es/corrector/Makefile
-                 data/gram/Makefile
-                 data/gram/en-eu/Makefile
-                 data/gram/es-eu/Makefile
                  src/Makefile])
 AC_OUTPUT
+
+#                  data/Makefile
+#                  data/config/Makefile
+#                  data/dict/Makefile
+#                  data/dict/en-eu/Makefile
+#                  data/dict/es-eu/Makefile
+#                  data/freeling/Makefile
+#                  data/freeling/common/Makefile
+#                  data/freeling/common/nec/Makefile
+#                  data/freeling/en/Makefile
+#                  data/freeling/en/chunker/Makefile
+#                  data/freeling/en/dep/Makefile
+#                  data/freeling/en/nec/Makefile
+#                  data/freeling/es/Makefile
+#                  data/freeling/es/dep/Makefile
+#                  data/freeling/es/nec/Makefile
+#                  data/gram/Makefile
+#                  data/gram/en-eu/Makefile
+#                  data/gram/es-eu/Makefile
 
 #
 # Print summary for the selected configuration
