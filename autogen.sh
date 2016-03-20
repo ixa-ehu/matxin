@@ -29,6 +29,8 @@ fi
 
 rm -f config.cache acconfig.h
 
+mkdir -p build-aux
+
 echo "- aclocal."                && \
 aclocal                        && \
 echo "- autoconf."                && \
