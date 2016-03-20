@@ -392,7 +392,7 @@ AC_CHECK_LIB(boost_system, main, [true],AC_MSG_ERROR([boost_system found]))
 AC_CHECK_LIB(foma, main, [true],AC_MSG_ERROR([foma found]))
 
 PKG_CHECK_MODULES(MATXIN, [dnl
- lttoolbox-3.2 >= required_lttoolbox_version dnl
+ lttoolbox >= required_lttoolbox_version dnl
  libxml-2.0 >= required_libxml_version dnl
  libpcre >= required_libpcre_version], CPPFLAGS="$CPPFLAGS $MATXIN_CPPFLAGS $MATXIN_CFLAGS"; LIBS="$LIBS $MATXIN_LIBS")
 
